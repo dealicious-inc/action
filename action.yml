@@ -1,0 +1,6 @@
+name: Check ECR Tag Exist
+runs:
+  using: "composite"
+  steps:
+    - run: echo "checking ecr tag..."
+      shell: bash
