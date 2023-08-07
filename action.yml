@@ -4,20 +4,35 @@ inputs:
     default: ""
   docker_image_tag:
     default: ""
-  exist:
-    default: "yes"
+  if_exist:
+    default: "continue"
 runs:
   using: "composite"
   steps:
     - shell: bash
       run: echo "checking ecr tag..."
-    - shell: bash
-      if: ${{ inputs.exist }} == "yes"
+
+    - name: Check Input Existence
+      shell: bash
       run: |
-        echo "input exist is yes"
-        echo ${{ inputs.exist }}
-    - shell: bash
-      if: ${{ inputs.exist }} == "no"
-      run: |
-        echo "input exist is no"
-        echo ${{ inputs.exist }}
+        tags=$(aws ecr list-images --repository-name ${{ inputs.ecr_repo_name }} | jq '.imageIds' | jq -r '.[]' | jq -r .imageTag)
+        for tag in $tags
+          do
+            if [ $tag ==  ${{ inputs.docker_image_tag }} ]
+            then
+              exist=1
+              break
+            else
+              exist=0
+            fi
+          done
+        
+        if [ $exist == 1 ] && [ "${{ inputs.if_exist }}" == "continue" ]; then
+          echo "same tag already exist : $tag"
+          echo "FAIL_MESSAGE=same tag already exist : ${{ inputs.docker_image_tag }}" >> $GITHUB_ENV
+          exit 1
+        elif [ $exist == 1 ] && [ "${{ inputs.if_exist }}" == "break" ]; then
+          echo "FAIL_MESSAGE=can not find input tag : ${{ inputs.docker_image_tag }}" >> $GITHUB_ENV
+          echo "can not find input tag : $tag"
+          exit 1
+        fi
