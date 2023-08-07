@@ -2,10 +2,20 @@ name: Check ECR Tag Exist
 inputs:
   ecr_repo_name:
     default: ""
+  docker_image_tag:
+    default: ""
+  exist:
+    default: "yes"
 runs:
   using: "composite"
   steps:
-    - run: echo "checking ecr tag..."
-      shell: bash
-    - run: echo $(aws ecr list-images --repository-name ${{ inputs.ecr_repo_name }} | (jq '.imageIds'))
-      shell: bash
+    - shell: bash
+      run: echo "checking ecr tag..."
+    - shell: bash
+      if: ${{ inputs.exist }} == "yes"
+      run: |
+        echo "input exist is yes"
+    - shell: bash
+      if: ${{ inputs.exist }} == "no"
+      run: |
+        echo "input exist is no"
