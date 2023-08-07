@@ -34,10 +34,12 @@ runs:
         fi
           
         if [ $exist == 1 ] && [ "${{ inputs.purpose }}" == "deploy" ]; then
+          echo "tag is valid : ${{ inputs.docker_image_tag }}"
           echo "FAIL_MESSAGE=tag is valid, but for other reason : ${{ inputs.docker_image_tag }}" >> $GITHUB_ENV
         fi
 
         if [ $exist == 0 ] && [ "${{ inputs.purpose }}" == "build" ]; then
+          echo "tag is valid : ${{ inputs.docker_image_tag }}"
           echo "FAIL_MESSAGE=tag is valid, but for other reason : ${{ inputs.docker_image_tag }}" >> $GITHUB_ENV
         fi
 
