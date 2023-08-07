@@ -36,3 +36,19 @@ runs:
           echo "FAIL_MESSAGE=can not find input tag : ${{ inputs.docker_image_tag }}" >> $GITHUB_ENV
           exit 1
         fi
+
+        # if [ $exist == 1 ] && [ "${{ inputs.if_exist }}" == "continue" ]; then
+          
+        if [ $exist == 1 ] && [ "${{ inputs.if_exist }}" == "break" ]; then
+          echo "same tag already exist : $tag"
+          echo "FAIL_MESSAGE=same tag already exist : ${{ inputs.docker_image_tag }}" >> $GITHUB_ENV
+          exit 1
+        fi
+
+        # if [ $exist == 0 ] && [ "${{ inputs.if_exist }}" == "continue" ]; then
+
+        if [ $exist == 0 ] && [ "${{ inputs.if_exist }}" == "break" ]; then
+           echo "can not find input tag : $tag"
+          echo "FAIL_MESSAGE=can not find input tag : ${{ inputs.docker_image_tag }}" >> $GITHUB_ENV
+          exit 1
+        fi
