@@ -12,12 +12,12 @@ runs:
     - shell: bash
       run: echo "checking ecr tag..."
     - shell: bash
-      if: "${{ inputs.exist == yes }}"
+      if: ${{ inputs.exist }} == "yes"
       run: |
         echo "input exist is yes"
         echo ${{ inputs.exist }}
     - shell: bash
-      if: "${{ inputs.exist == no }}"
+      if: ${{ inputs.exist }} == "no"
       run: |
         echo "input exist is no"
         echo ${{ inputs.exist }}
