@@ -4,8 +4,8 @@ inputs:
     default: ""
   docker_image_tag:
     default: ""
-  if_exist:
-    default: "continue"
+  purpose:
+    default: ""
 runs:
   using: "composite"
   steps:
@@ -27,18 +27,22 @@ runs:
             fi
           done
       
-        # if [ $exist == 1 ] && [ "${{ inputs.if_exist }}" == "continue" ]; then
-          
-        if [ $exist == 1 ] && [ "${{ inputs.if_exist }}" == "break" ]; then
+        if [ $exist == 1 ] && [ "${{ inputs.if_purpose }}" == "build" ]; then
           echo "same tag already exist : $tag"
           echo "FAIL_MESSAGE=same tag already exist : ${{ inputs.docker_image_tag }}" >> $GITHUB_ENV
           exit 1
         fi
+          
+        if [ $exist == 1 ] && [ "${{ inputs.purpose }}" == "deploy" ]; then
+          echo "FAIL_MESSAGE=tag is valid, but for other reason : ${{ inputs.docker_image_tag }}" >> $GITHUB_ENV
+        fi
 
-        # if [ $exist == 0 ] && [ "${{ inputs.if_exist }}" == "continue" ]; then
+        if [ $exist == 0 ] && [ "${{ inputs.purpose }}" == "build" ]; then
+          echo "FAIL_MESSAGE=tag is valid, but for other reason : ${{ inputs.docker_image_tag }}" >> $GITHUB_ENV
+        fi
 
-        if [ $exist == 0 ] && [ "${{ inputs.if_exist }}" == "break" ]; then
-           echo "can not find input tag : $tag"
+        if [ $exist == 0 ] && [ "${{ inputs.purpose }}" == "deploy" ]; then
+          echo "can not find input tag : $tag"
           echo "FAIL_MESSAGE=can not find input tag : ${{ inputs.docker_image_tag }}" >> $GITHUB_ENV
           exit 1
         fi
